@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Web;
+using System.IO;
 
 namespace ProjectFifaV2
 {
@@ -16,6 +17,7 @@ namespace ProjectFifaV2
         private DatabaseHandler dbh;
         private OpenFileDialog opfd;
 
+        private string path;
         DataTable table;
         SqlDataAdapter dataAdapter;
         public frmAdmin()
@@ -82,7 +84,30 @@ namespace ProjectFifaV2
             if (!(txtPath.Text == null))
             {
                 dbh.OpenConnectionToDB();
+                using (var reader = new StreamReader(path))
+                {
+                    List<string> listA = new List<string>();
+                    List<string> listB = new List<string>();
 
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        var values = line.Split(';');
+
+                        listA.Add(values[0]);
+                        listB.Add(values[1]);
+
+                        if (!values[1].Contains("student_id"))
+                        {
+                            MessageBox.Show(values[1]);
+                        }
+                        else
+                        {
+                            Table2(values);
+                        }
+
+                    }
+                }
                 dbh.CloseConnectionToDB();
             }
             else
@@ -90,7 +115,9 @@ namespace ProjectFifaV2
                 MessageHandler.ShowMessage("No filename selected.");
             }
         }
-        
+        public void Table2(string[] values)
+        {
+        }
         private string GetFilePath()
         {
             string filePath = "";
@@ -102,7 +129,7 @@ namespace ProjectFifaV2
             {
                 filePath = opfd.FileName;
             }
-
+            path = filePath;
             return filePath;
         }
 
