@@ -97,14 +97,61 @@ namespace ProjectFifaV2
                         listA.Add(values[0]);
                         listB.Add(values[1]);
 
-                        if (!values[1].Contains("student_id"))
+                        if (!values[1].Contains("student_id") && !values[1].Contains("poule_id"))
                         {
-                            MessageBox.Show(values[1]);
+                            foreach (string value in values)
+                            {
+                                dgvAdminData.Columns.Add("Column1", value);
+                            }
+                            while (!values[1].Contains("student_id") && !reader.EndOfStream)
+                            {
+                                line = reader.ReadLine();
+                                values = line.Split(';');
+                                if(values[1].Contains("student_id"))
+                                {
+                                    break;
+                                }
+                                dgvAdminData.Rows.Add(values[0], values[1], values[2], values[3], values[4], values[5]);
+                            }
+                            
+
                         }
-                        else
+                        if (!values[1].Contains("poule_id") && !values[1].Contains("team_id_a"))
                         {
-                            Table2(values);
+                            foreach (string value in values)
+                            {
+                                dataGridView1.Columns.Add("Column1", value);
+                            }
+                            while (!values[1].Contains("poule_id") && !reader.EndOfStream)
+                            {
+                                line = reader.ReadLine();
+                                values = line.Split(';');
+                                if (values[1].Contains("poule_id"))
+                                {
+                                    break;
+                                }
+                                dataGridView1.Rows.Add(values[0], values[1], values[2], values[3], values[4], values[5]);
+                            }
                         }
+                        if (!values[1].Contains("team_id_a") && !values[1].Contains("student_id"))
+                        {
+                            foreach (string value in values)
+                            {
+                                dataGridView2.Columns.Add("Column1", value);
+                            }
+                            while (!values[1].Contains("team_id_a") && !reader.EndOfStream)
+                            {
+                                line = reader.ReadLine();
+                                values = line.Split(';');
+                                if (reader.EndOfStream)
+                                {
+                                    break;
+                                }
+                                dataGridView2.Rows.Add(values[0], values[1], values[2], values[3], values[4]);
+                            }
+                        }
+                        break;
+
 
                     }
                 }
@@ -114,9 +161,6 @@ namespace ProjectFifaV2
             {
                 MessageHandler.ShowMessage("No filename selected.");
             }
-        }
-        public void Table2(string[] values)
-        {
         }
         private string GetFilePath()
         {
