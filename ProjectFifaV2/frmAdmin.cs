@@ -91,7 +91,8 @@ namespace ProjectFifaV2
 
                     while (!reader.EndOfStream)
                     {
-                        var line = reader.ReadLine();
+                        var lines = reader.ReadLine();
+                        var line = lines.Replace("\"", "");
                         var values = line.Split(';');
 
                         listA.Add(values[0]);
@@ -105,12 +106,14 @@ namespace ProjectFifaV2
                             }
                             while (!values[1].Contains("student_id") && !reader.EndOfStream)
                             {
-                                line = reader.ReadLine();
+                                lines = reader.ReadLine();
+                                line = lines.Replace("\"", "").Replace("NULL", "0");
                                 values = line.Split(';');
                                 if(values[1].Contains("student_id"))
                                 {
                                     break;
                                 }
+                                ToSQL(values, 1);
                                 dgvAdminData.Rows.Add(values[0], values[1], values[2], values[3], values[4], values[5]);
                             }
                             
@@ -124,12 +127,14 @@ namespace ProjectFifaV2
                             }
                             while (!values[1].Contains("poule_id") && !reader.EndOfStream)
                             {
-                                line = reader.ReadLine();
+                                lines = reader.ReadLine();
+                                line = lines.Replace("\"", "").Replace("NULL", "0");
                                 values = line.Split(';');
                                 if (values[1].Contains("poule_id"))
                                 {
                                     break;
                                 }
+                                ToSQL(values, 2);
                                 dataGridView1.Rows.Add(values[0], values[1], values[2], values[3], values[4], values[5]);
                             }
                         }
@@ -141,12 +146,14 @@ namespace ProjectFifaV2
                             }
                             while (!values[1].Contains("team_id_a") && !reader.EndOfStream)
                             {
-                                line = reader.ReadLine();
+                                lines = reader.ReadLine();
+                                line = lines.Replace("\"", "");
                                 values = line.Split(';');
                                 if (reader.EndOfStream)
                                 {
                                     break;
                                 }
+                                ToSQL(values, 3);
                                 dataGridView2.Rows.Add(values[0], values[1], values[2], values[3], values[4]);
                             }
                         }
@@ -161,6 +168,79 @@ namespace ProjectFifaV2
             {
                 MessageHandler.ShowMessage("No filename selected.");
             }
+        }
+
+        private void ToSQL(string[] value, int i)
+        {
+            dbh.TestConnection();
+            dbh.OpenConnectionToDB();
+            if (i == 1)
+            {
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT TblGames ON " +
+                        "INSERT INTO TblGames ([Game_id], [HomeTeam], [AwayTeam], [HomeTeamScore], [AwayTeamScore]) VALUES (@id, @HomeTeam, @AwayTeam, @HomeTeamScore, @AwayTeamScore) " +
+                        "SET IDENTITY_INSERT TblGames OFF"))
+                    {
+                        cmd.Parameters.AddWithValue("id", value[0]);
+                        cmd.Parameters.AddWithValue("HomeTeam", value[1]);
+                        cmd.Parameters.AddWithValue("AwayTeam", value[2]);
+                        cmd.Parameters.AddWithValue("HomeTeamScore", value[3]);
+                        cmd.Parameters.AddWithValue("AwayTeamScore", value[4]);
+                        cmd.Connection = dbh.GetCon();
+                        cmd.ExecuteNonQuery();
+                    }
+                    return;
+                }
+                catch(Exception ex)
+                {
+                    return;
+                }
+            }
+            if (i == 2)
+            {
+                try
+                {
+                    using (SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT TblPlayers ON " +
+                        "INSERT INTO TblPlayers ([Player_id], [Name], [Surname], [GoalsScored], [Team_id]) VALUES (@id, @Name, @Surname, @GoalsScored, @Team_id) " +
+                        "SET IDENTITY_INSERT TblPlayers OFF"))
+                    {
+                        cmd.Parameters.AddWithValue("id", value[0]);
+                        cmd.Parameters.AddWithValue("Name", value[3]);
+                        cmd.Parameters.AddWithValue("SurName", value[4]);
+                        cmd.Parameters.AddWithValue("GoalsScored", 0);
+                        cmd.Parameters.AddWithValue("Team_id", value[2]);
+                        cmd.Connection = dbh.GetCon();
+                        cmd.ExecuteNonQuery();
+                        return;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    return;
+                }
+            }
+             if (i == 3)
+             {
+                 try
+                 {
+                     using (SqlCommand cmd = new SqlCommand("SET IDENTITY_INSERT TblTeams ON " +
+                         "INSERT INTO TblTeams ([Team_Id], [TeamName]) VALUES (@id, @Name) " +
+                         "SET IDENTITY_INSERT TblTeams OFF"))
+                     {
+                         cmd.Parameters.AddWithValue("id", value[0]);
+                         cmd.Parameters.AddWithValue("Name", value[2]);
+                         cmd.Connection = dbh.GetCon();
+                         cmd.ExecuteNonQuery();
+                     }
+                     return;
+                 }
+                 catch(Exception ex)
+                 {
+                    MessageBox.Show(ex.Source + ":" + ex.Message);
+                 }
+             }
+            dbh.CloseConnectionToDB();
         }
         private string GetFilePath()
         {
@@ -194,14 +274,24 @@ namespace ProjectFifaV2
             }
         }
 
+        public void ClearDatagrid(DataGridView dataGrid)
+        {
+            dataGrid.Rows.Clear();
+            dataGrid.Columns.Clear();
+        }
         private void btnClear_Click(object sender, EventArgs e)
         {
             try
-            {
-
+            {               
                 table.Clear();
+                dataGridView1.Rows.Clear();
+
                 dgvAdminData.DataSource = null;
                 dgvAdminData.Refresh();
+
+                ClearDatagrid(dataGridView1);
+                ClearDatagrid(dataGridView2);
+                ClearDatagrid(dgvAdminData);
             }
             catch(Exception ex)
             {

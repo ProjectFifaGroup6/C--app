@@ -83,7 +83,7 @@ namespace ProjectFifaV2
 
             dbh.CloseConnectionToDB();
 
-            for (int i = 0; i < hometable.Rows.Count; i++)
+            for (int i = 0; i < hometable.Rows.Count-1; i++)
             {
                 DataRow dataRowHome = hometable.Rows[i];
                 DataRow dataRowAway = awayTable.Rows[i];
@@ -105,7 +105,7 @@ namespace ProjectFifaV2
 
             dbh.CloseConnectionToDB();
 
-            for (int i = 0; i < hometable.Rows.Count; i++)
+            for (int i = 0; i < hometable.Rows.Count-1; i++)
             {
                 DataRow dataRowHome = hometable.Rows[i];
                 DataRow dataRowAway = awayTable.Rows[i];
