@@ -50,10 +50,11 @@ namespace ProjectFifaV2
             DialogResult result = MessageBox.Show("Are you sure you want to clear your prediction?", "Clear Predictions", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (result.Equals(DialogResult.OK))
             {
+                
             }
         }
 
-        private bool DisableEditButton()
+            private bool DisableEditButton()
         {
             bool hasPassed;
             //This is the deadline for filling in the predictions
@@ -147,6 +148,35 @@ namespace ProjectFifaV2
         internal void GetUsername(string un)
         {
             userName = un;
+        }
+
+        private void btnAddPrediction_Click(object sender, EventArgs e)
+        {
+            dbh.TestConnection();
+            dbh.OpenConnectionToDB();
+            foreach (Control c in pnlPredCard.Controls)
+            {
+                if (c.GetType() == typeof(TextBox))
+                {
+                    ((TextBox)(c)).ReadOnly = true;
+                }
+            }
+            
+
+
+
+            dbh.CloseConnectionToDB();
+        }
+
+        private void btnEditPrediction_Click(object sender, EventArgs e)
+        {
+            foreach (Control c in pnlPredCard.Controls)
+            {
+                if (c.GetType() == typeof(TextBox))
+                {
+                    ((TextBox)(c)).ReadOnly = false;
+                }
+            }
         }
     }
 }
