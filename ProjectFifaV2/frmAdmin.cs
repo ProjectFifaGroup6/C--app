@@ -237,7 +237,7 @@ namespace ProjectFifaV2
                  }
                  catch(Exception ex)
                  {
-                    MessageBox.Show(ex.Source + ":" + ex.Message);
+                    return;
                  }
              }
             dbh.CloseConnectionToDB();
@@ -283,8 +283,8 @@ namespace ProjectFifaV2
         {
             try
             {               
-                table.Clear();
                 dataGridView1.Rows.Clear();
+                
 
                 dgvAdminData.DataSource = null;
                 dgvAdminData.Refresh();

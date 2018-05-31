@@ -31,7 +31,7 @@ namespace ProjectFifaV2
         {
             con.Close();
             bool open = false;
-            
+
             try
             {
                 con.Open();
@@ -73,7 +73,7 @@ namespace ProjectFifaV2
             SqlDataAdapter dataAdapter = new SqlDataAdapter(query, GetCon());
             DataTable dt = new DataTable();
             dataAdapter.Fill(dt);
-            
+
             CloseConnectionToDB();
 
             return dt;

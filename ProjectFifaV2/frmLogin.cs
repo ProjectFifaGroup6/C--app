@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
 
 namespace ProjectFifaV2
 {
@@ -16,7 +17,7 @@ namespace ProjectFifaV2
         private Form frmAdmin;
         private Form frmPlayer;
         private Form frmRanking;
-
+        public static string user = null;
         public frmLogin()
         {
             InitializeComponent();
@@ -83,6 +84,10 @@ namespace ProjectFifaV2
             frmRanking.Show(); 
         }
 
+        public static string getuser()
+        {
+            return user;
+        }
         private void btnLogin_Click(object sender, EventArgs e)
         {
             dbh.TestConnection();
@@ -91,6 +96,8 @@ namespace ProjectFifaV2
             bool exist = false;
             string username = txtUsername.Text;
             string password = txtPassword.Text;
+            user = username;
+
 
             txtUsername.Text = "";
             txtPassword.Text = "";
