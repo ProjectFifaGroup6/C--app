@@ -111,9 +111,60 @@ namespace ProjectFifaV2
                 ListViewItem lstItem = new ListViewItem(dataRowHome["TeamName"].ToString());
                 lstItem.SubItems.Add(dataRowHome["HomeTeamScore"].ToString());
                 lstItem.SubItems.Add(dataRowAway["AwayTeamScore"].ToString());
+                if(Int32.Parse(dataRowAway["AwayTeamScore"].ToString()) > 0 | Int32.Parse(dataRowHome["HomeTeamScore"].ToString()) > 0)
+                {
+                    CheckPrediction(dataRowHome["Teamname"].ToString(), dataRowAway["TeamName"].ToString(),Int32.Parse(dataRowAway["AwayTeamScore"].ToString()), Int32.Parse(dataRowHome["HomeTeamScore"].ToString()));
+                }
                 lstItem.SubItems.Add(dataRowAway["TeamName"].ToString());
                 lvOverview.Items.Add(lstItem);
             }
+        }
+        public void CheckPrediction(string HomeTeam, string AwayTeam, int AwayScore, int HomeScore)
+        {
+            dbh.TestConnection();
+            dbh.OpenConnectionToDB();
+
+            int Home_id = 0;
+            int Away_id = 0;
+            int Game_id = 0;
+            int Count = 0;
+            using (SqlCommand cmd = new SqlCommand("SELECT Team_Id FROM TblTeams WHERE TeamName = @HomeTeam", dbh.GetCon()))
+            {
+                cmd.Parameters.AddWithValue("HomeTeam", HomeTeam);
+                Home_id = (int)cmd.ExecuteScalar();
+            }
+            using (SqlCommand cmd = new SqlCommand("SELECT Team_Id FROM TblTeams WHERE TeamName = @AwayTeam", dbh.GetCon()))
+            {
+                cmd.Parameters.AddWithValue("AwayTeam", AwayTeam);
+                Away_id = (int)cmd.ExecuteScalar();
+            }
+            using (SqlCommand cmd = new SqlCommand("SELECT Game_id FROM TblGames WHERE HomeTeam = @HomeTeam AND AwayTeam = @AwayTeam", dbh.GetCon()))
+            {
+                cmd.Parameters.AddWithValue("HomeTeam", Home_id);
+                cmd.Parameters.AddWithValue("AwayTeam", Away_id);
+                Game_id = (int)cmd.ExecuteScalar();
+            }
+
+            using (SqlCommand cmd = new SqlCommand("SELECT Count(*) FROM TblPredictions WHERE Game_id = @Game_id AND PredictedHomeScore = @HomeScore AND PredictedAwayScore = @AwayScore AND User_id = @uid", dbh.GetCon()))
+            {
+                cmd.Parameters.AddWithValue("Game_id", Game_id);
+                cmd.Parameters.AddWithValue("HomeScore", HomeScore);
+                cmd.Parameters.AddWithValue("AwayScore", AwayScore);
+                cmd.Parameters.AddWithValue("uid", GetUID());
+                Count = (int)cmd.ExecuteScalar();
+
+            }
+
+            if(Count == 0)
+            {
+                MessageBox.Show("Nope");
+            }
+            else
+            {
+                MessageBox.Show("True");
+            }
+
+            dbh.CloseConnectionToDB();
         }
         public int GetUID()
         {
