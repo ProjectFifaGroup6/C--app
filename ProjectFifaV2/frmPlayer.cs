@@ -113,7 +113,7 @@ namespace ProjectFifaV2
                 lstItem.SubItems.Add(dataRowAway["AwayTeamScore"].ToString());
                 if(Int32.Parse(dataRowAway["AwayTeamScore"].ToString()) > 0 | Int32.Parse(dataRowHome["HomeTeamScore"].ToString()) > 0)
                 {
-                    CheckPrediction(dataRowHome["Teamname"].ToString(), dataRowAway["TeamName"].ToString(),Int32.Parse(dataRowAway["AwayTeamScore"].ToString()), Int32.Parse(dataRowHome["HomeTeamScore"].ToString()));
+                   CheckPrediction(dataRowHome["Teamname"].ToString(), dataRowAway["TeamName"].ToString(),Int32.Parse(dataRowAway["AwayTeamScore"].ToString()), Int32.Parse(dataRowHome["HomeTeamScore"].ToString()));
                 }
                 lstItem.SubItems.Add(dataRowAway["TeamName"].ToString());
                 lvOverview.Items.Add(lstItem);
@@ -157,11 +157,20 @@ namespace ProjectFifaV2
 
             if(Count == 0)
             {
-                MessageBox.Show("Nope");
             }
             else
             {
-                MessageBox.Show("True");
+                using (SqlCommand cmd = new SqlCommand("UPDATE TblPredictions SET rewarded = 1 WHERE Game_id = @game_id AND User_id = @uid", dbh.GetCon()))
+                {
+                    cmd.Parameters.AddWithValue("game_id", Game_id);
+                    cmd.Parameters.AddWithValue("uid", GetUID());
+                    cmd.ExecuteNonQuery();
+                }
+                using (SqlCommand cmd = new SqlCommand("UPDATE TblUsers SET score = score + 1 WHERE id = @uid", dbh.GetCon()))
+                {
+                    cmd.Parameters.AddWithValue("uid", GetUID());
+                    cmd.ExecuteNonQuery();
+                }
             }
 
             dbh.CloseConnectionToDB();
@@ -200,17 +209,40 @@ namespace ProjectFifaV2
                 {
                     cmd.Parameters.AddWithValue("uid", GetUID());
                     cmd.Parameters.AddWithValue("game", dataRowAway["Game_id"].ToString());
-
-                    HomePred = (int)cmd.ExecuteScalar();
+                    object x = cmd.ExecuteScalar();
+                    if (x != null)
+                    {
+                        HomePred = (int)cmd.ExecuteScalar();
+                    }
                 }
                 using (SqlCommand cmd = new SqlCommand("SELECT PredictedAwayScore FROM [TblPredictions] WHERE user_id = @uid AND game_id = @game", dbh.GetCon()))
                 {
                     cmd.Parameters.AddWithValue("uid", GetUID());
                     cmd.Parameters.AddWithValue("game", dataRowAway["Game_id"].ToString());
-
-                    AwayPred = (int)cmd.ExecuteScalar();
+                    object z = cmd.ExecuteScalar();
+                    if (z != null)
+                    {
+                        AwayPred = (int)cmd.ExecuteScalar();
+                    }
                 }
 
+                int rewarded = 0;
+                using (SqlCommand cmd = new SqlCommand("SELECT rewarded FROM [TblPredictions] WHERE Game_id = @game_id AND User_id = @uid", dbh.GetCon()))
+                {
+                    cmd.Parameters.AddWithValue("game_id", dataRowAway["Game_id"].ToString());
+                    cmd.Parameters.AddWithValue("uid", GetUID());
+                    object y = cmd.ExecuteScalar();
+                    if (y != null)
+                    {
+                        rewarded = (int)cmd.ExecuteScalar();
+                    }
+                }
+                
+                if(rewarded == 1)
+                {
+                    dbh.CloseConnectionToDB();
+                    continue;
+                }
                 Label lblHomeTeam = new Label();
                 Label lblAwayTeam = new Label();
                 TextBox txtHomePred = new TextBox();
