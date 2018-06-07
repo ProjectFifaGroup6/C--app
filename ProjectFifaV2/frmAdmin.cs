@@ -225,7 +225,7 @@ namespace ProjectFifaV2
                 }
                 catch(Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    return;
                 }
             }
              if (i == 3)
@@ -245,7 +245,7 @@ namespace ProjectFifaV2
                  }
                  catch(Exception ex)
                  {
-                    MessageBox.Show(ex.Message);
+                    return;
                 }
              }
             dbh.CloseConnectionToDB();
