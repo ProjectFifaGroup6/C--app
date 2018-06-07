@@ -194,7 +194,15 @@ namespace ProjectFifaV2
                 }
                 catch(Exception ex)
                 {
-                    return;
+                    using (SqlCommand cmd = new SqlCommand("UPDATE [TblGames] SET [HomeTeamScore] = @HomeTeamScore, [AwayTeamScore] = @AwayTeamScore WHERE [Game_id] = @id AND [HomeTeam] = @HomeTeam AND [AwayTeam] = @AwayTeam", dbh.GetCon()))
+                    {
+                        cmd.Parameters.AddWithValue("id", value[0]);
+                        cmd.Parameters.AddWithValue("HomeTeam", value[1]);
+                        cmd.Parameters.AddWithValue("AwayTeam", value[2]);
+                        cmd.Parameters.AddWithValue("HomeTeamScore", value[3]);
+                        cmd.Parameters.AddWithValue("AwayTeamScore", value[4]);
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
             if (i == 2)
@@ -217,7 +225,7 @@ namespace ProjectFifaV2
                 }
                 catch(Exception ex)
                 {
-                    return;
+                    MessageBox.Show(ex.Message);
                 }
             }
              if (i == 3)
@@ -237,8 +245,8 @@ namespace ProjectFifaV2
                  }
                  catch(Exception ex)
                  {
-                    return;
-                 }
+                    MessageBox.Show(ex.Message);
+                }
              }
             dbh.CloseConnectionToDB();
         }
@@ -262,7 +270,15 @@ namespace ProjectFifaV2
             int extensionLength = extension.Length;
             int strLength = fileString.Length;
 
-            string ext = fileString.Substring(strLength - extensionLength, extensionLength);
+            string ext = null;
+            if (fileString.Length >1)
+            {
+                ext = fileString.Substring(strLength - extensionLength, extensionLength);
+            }
+            else
+            {
+                MessageBox.Show("Choose a correct path.");
+            }
 
             if (ext == extension)
             {

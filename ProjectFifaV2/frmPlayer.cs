@@ -16,7 +16,7 @@ namespace ProjectFifaV2
         private DatabaseHandler dbh;
         List<TextBox> txtBoxList;
 
-
+        int[] Finished = new int[20];
 
         public frmPlayer(Form frm, string un)
         {
@@ -113,13 +113,13 @@ namespace ProjectFifaV2
                 lstItem.SubItems.Add(dataRowAway["AwayTeamScore"].ToString());
                 if(Int32.Parse(dataRowAway["AwayTeamScore"].ToString()) > 0 | Int32.Parse(dataRowHome["HomeTeamScore"].ToString()) > 0)
                 {
-                   CheckPrediction(dataRowHome["Teamname"].ToString(), dataRowAway["TeamName"].ToString(),Int32.Parse(dataRowAway["AwayTeamScore"].ToString()), Int32.Parse(dataRowHome["HomeTeamScore"].ToString()));
+                   CheckPrediction(dataRowHome["Teamname"].ToString(), dataRowAway["TeamName"].ToString(),Int32.Parse(dataRowAway["AwayTeamScore"].ToString()), Int32.Parse(dataRowHome["HomeTeamScore"].ToString()), i);
                 }
                 lstItem.SubItems.Add(dataRowAway["TeamName"].ToString());
                 lvOverview.Items.Add(lstItem);
             }
         }
-        public void CheckPrediction(string HomeTeam, string AwayTeam, int AwayScore, int HomeScore)
+        public void CheckPrediction(string HomeTeam, string AwayTeam, int AwayScore, int HomeScore, int index)
         {
             dbh.TestConnection();
             dbh.OpenConnectionToDB();
@@ -154,22 +154,31 @@ namespace ProjectFifaV2
                 Count = (int)cmd.ExecuteScalar();
 
             }
-
-            if(Count == 0)
+            Finished[index] = 1;
+            if (Count == 1)
             {
-            }
-            else
-            {
-                using (SqlCommand cmd = new SqlCommand("UPDATE TblPredictions SET rewarded = 1 WHERE Game_id = @game_id AND User_id = @uid", dbh.GetCon()))
+                int rewarded = 0;
+                using (SqlCommand cmd = new SqlCommand("SELECT [rewarded] FROM tblPredictions WHERE Game_id = @game_id AND User_id = @uid", dbh.GetCon()))
                 {
                     cmd.Parameters.AddWithValue("game_id", Game_id);
                     cmd.Parameters.AddWithValue("uid", GetUID());
-                    cmd.ExecuteNonQuery();
+                    rewarded = (int)cmd.ExecuteScalar();
                 }
-                using (SqlCommand cmd = new SqlCommand("UPDATE TblUsers SET score = score + 1 WHERE id = @uid", dbh.GetCon()))
+                if (rewarded == 0)
                 {
-                    cmd.Parameters.AddWithValue("uid", GetUID());
-                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("You Have Correctly Predicted Game : " + HomeTeam + " VS " + AwayTeam);
+                    using (SqlCommand cmd = new SqlCommand("UPDATE TblPredictions SET rewarded = 1 WHERE Game_id = @game_id AND User_id = @uid", dbh.GetCon()))
+                    {
+                        cmd.Parameters.AddWithValue("game_id", Game_id);
+                        cmd.Parameters.AddWithValue("uid", GetUID());
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("UPDATE TblUsers SET score = score + 1 WHERE id = @uid", dbh.GetCon()))
+                    {
+                        cmd.Parameters.AddWithValue("uid", GetUID());
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
 
@@ -237,12 +246,7 @@ namespace ProjectFifaV2
                         rewarded = (int)cmd.ExecuteScalar();
                     }
                 }
-                
-                if(rewarded == 1)
-                {
-                    dbh.CloseConnectionToDB();
-                    continue;
-                }
+                Label GameOver = new Label();
                 Label lblHomeTeam = new Label();
                 Label lblAwayTeam = new Label();
                 TextBox txtHomePred = new TextBox();
@@ -263,6 +267,13 @@ namespace ProjectFifaV2
                 txtAwayPred.Width = 40;
                 txtAwayPred.Name = "txtAway" + i;
 
+                if (rewarded == 1 || Finished[i] == 1)
+                {
+                    txtAwayPred.Hide();
+                    txtHomePred.Hide();
+                    GameOver.Text = "Finished";
+                    GameOver.Location = new Point(txtHomePred.Location.X, txtHomePred.Location.Y);
+                }
                 lblAwayTeam.Text = dataRowAway["TeamName"].ToString();
                 lblAwayTeam.Location = new Point(txtHomePred.Width + lblHomeTeam.Width + txtAwayPred.Width, txtHomePred.Top + 3);
                 lblAwayTeam.AutoSize = true;
@@ -271,6 +282,7 @@ namespace ProjectFifaV2
                 pnlPredCard.Controls.Add(txtHomePred);
                 pnlPredCard.Controls.Add(txtAwayPred);
                 pnlPredCard.Controls.Add(lblAwayTeam);
+                pnlPredCard.Controls.Add(GameOver);
                 //ListViewItem lstItem = new ListViewItem(dataRowHome["TeamName"].ToString());
                 //lstItem.SubItems.Add(dataRowHome["HomeTeamScore"].ToString());
                 //lstItem.SubItems.Add(dataRowAway["AwayTeamScore"].ToString());
