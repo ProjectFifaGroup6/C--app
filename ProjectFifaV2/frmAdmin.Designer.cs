@@ -68,6 +68,7 @@
             this.txtPath.Margin = new System.Windows.Forms.Padding(4);
             this.txtPath.MaxLength = 256;
             this.txtPath.Name = "txtPath";
+            this.txtPath.ReadOnly = true;
             this.txtPath.Size = new System.Drawing.Size(685, 22);
             this.txtPath.TabIndex = 1;
             // 
