@@ -59,15 +59,15 @@ namespace ProjectFifaV2
             {
                 foreach (Control c in pnlPredCard.Controls)
                 {
-                    if (c.GetType() == typeof(TextBox))
+                    if (c.GetType() == typeof(NumericUpDown))
                     {
-                        if (((TextBox)(c)).ReadOnly == true)
+                        if (((NumericUpDown)(c)).ReadOnly == true)
                         {
                             return;
                         }
-                        else if (((TextBox)(c)).ReadOnly == false)
+                        else if (((NumericUpDown)(c)).ReadOnly == false)
                         {
-                            ((TextBox)(c)).Text = "0";
+                            ((NumericUpDown)(c)).Text = "0";
                         }
                     }
                 }
@@ -249,8 +249,8 @@ namespace ProjectFifaV2
                 Label GameOver = new Label();
                 Label lblHomeTeam = new Label();
                 Label lblAwayTeam = new Label();
-                TextBox txtHomePred = new TextBox();
-                TextBox txtAwayPred = new TextBox();
+                NumericUpDown txtHomePred = new NumericUpDown();
+                NumericUpDown txtAwayPred = new NumericUpDown();
 
                 lblHomeTeam.TextAlign = ContentAlignment.BottomRight;
                 lblHomeTeam.Text = dataRowHome["TeamName"].ToString();
@@ -301,20 +301,20 @@ namespace ProjectFifaV2
 
             foreach (Control c in pnlPredCard.Controls)
             {
-                if (c.GetType() == typeof(TextBox))
+                if (c.GetType() == typeof(NumericUpDown))
                 {
-                    if(((TextBox)(c)).Name.Contains("txtAway")| ((TextBox)(c)).Name.Contains("txtHome"))
+                    if(((NumericUpDown)(c)).Name.Contains("txtAway")| ((NumericUpDown)(c)).Name.Contains("txtHome"))
                     {
                         int index = 0;
-                        if(((TextBox)(c)).Name.Contains("txtHome"))
+                        if(((NumericUpDown)(c)).Name.Contains("txtHome"))
                         {
-                            index = Int32.Parse(((TextBox)(c)).Name.Replace("txtHome", ""));
-                            HomeScore[index] = Int32.Parse(((TextBox)(c)).Text);
+                            index = Int32.Parse(((NumericUpDown)(c)).Name.Replace("txtHome", ""));
+                            HomeScore[index] = Int32.Parse(((NumericUpDown)(c)).Text);
                         }
-                        else if(((TextBox)(c)).Name.Contains("txtAway"))
+                        else if(((NumericUpDown)(c)).Name.Contains("txtAway"))
                         {
-                            index = Int32.Parse(((TextBox)(c)).Name.Replace("txtAway", ""));
-                            AwayScore[index] = Int32.Parse(((TextBox)(c)).Text);
+                            index = Int32.Parse(((NumericUpDown)(c)).Name.Replace("txtAway", ""));
+                            AwayScore[index] = Int32.Parse(((NumericUpDown)(c)).Text);
                         }
                         if(game_id[index] != null)
                         {
@@ -347,7 +347,7 @@ namespace ProjectFifaV2
                             
                         }
                     }
-                    ((TextBox)(c)).ReadOnly = true;
+                    ((NumericUpDown)(c)).ReadOnly = true;
                 }
             }
             
@@ -373,9 +373,9 @@ namespace ProjectFifaV2
         {
             foreach (Control c in pnlPredCard.Controls)
             {
-                if (c.GetType() == typeof(TextBox))
+                if (c.GetType() == typeof(NumericUpDown))
                 {
-                    ((TextBox)(c)).ReadOnly = false;
+                    ((NumericUpDown)(c)).ReadOnly = false;
                 }
             }
         }
