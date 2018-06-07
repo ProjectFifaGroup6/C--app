@@ -261,11 +261,15 @@ namespace ProjectFifaV2
                 txtHomePred.Location = new Point(lblHomeTeam.Width, lblHomeTeam.Top - 3);
                 txtHomePred.Width = 40;
                 txtHomePred.Name = "txtHome" + i;
+                txtHomePred.Minimum = 0;
+                txtHomePred.Maximum = 20;
 
                 txtAwayPred.Text = AwayPred.ToString();
                 txtAwayPred.Location = new Point(txtHomePred.Width + lblHomeTeam.Width, txtHomePred.Top);
                 txtAwayPred.Width = 40;
                 txtAwayPred.Name = "txtAway" + i;
+                txtAwayPred.Minimum = 0;
+                txtAwayPred.Maximum = 20;
 
                 if (rewarded == 1 || Finished[i] == 1)
                 {

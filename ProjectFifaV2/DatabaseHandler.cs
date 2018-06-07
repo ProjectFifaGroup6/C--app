@@ -24,7 +24,7 @@ namespace ProjectFifaV2
             AppDomain.CurrentDomain.SetData("DataDirectory", appPath[0]);
 
             con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename='|DataDirectory|\db.mdf';Integrated Security=True;Connect Timeout=30");
-            //con = new SqlConnection(@"Server=localhost;Database=project_fifa;User ID=thijs;Password=Laarhoven0;Trusted_Connection=False;");
+            //con = new SqlConnection(@"Server=localhost;Database=project_fifa;User ID=thijs;Password=******;Trusted_Connection=False;");
         }
 
         public void TestConnection()

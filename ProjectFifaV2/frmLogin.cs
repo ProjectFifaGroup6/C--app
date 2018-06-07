@@ -122,11 +122,13 @@ namespace ProjectFifaV2
                 if (admin)
                 {
                     this.Hide();
+                    MessageBox.Show("Logged In As Admin");
                     frmAdmin.Show();
                 }
                 else
                 {
                     this.Hide();
+                    MessageBox.Show("Logged In As User");
                     frmPlayer = new frmPlayer(frmRanking, username);
                     frmPlayer.Show();
                     //frmPlayer.Show();
