@@ -351,6 +351,7 @@ namespace ProjectFifaV2
                             
                         }
                     }
+                    MessageBox.Show("All Prediction Added!");
                     ((NumericUpDown)(c)).ReadOnly = true;
                 }
             }
